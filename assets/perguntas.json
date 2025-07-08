@@ -1,0 +1,97 @@
+[
+  {
+    "pergunta": "Qual obra de Machado de Assis é considerada a primeira do Realismo brasileiro?",
+    "opcoes": [
+      "Dom Casmurro",
+      "Memórias Póstumas de Brás Cubas",
+      "O Alienista",
+      "Quincas Borba"
+    ],
+    "resposta": "Memórias Póstumas de Brás Cubas"
+  },
+  {
+    "pergunta": "Qual é a fórmula química do gás carbônico?",
+    "opcoes": ["CO", "CO2", "CH4", "H2O"],
+    "resposta": "CO2"
+  },
+  {
+    "pergunta": "Em qual período da Pré-História surgiu a agricultura?",
+    "opcoes": [
+      "Paleolítico",
+      "Neolítico",
+      "Idade dos Metais",
+      "Período Colonial"
+    ],
+    "resposta": "Neolítico"
+  },
+  {
+    "pergunta": "Quem foi o líder da Inconfidência Mineira?",
+    "opcoes": [
+      "Tiradentes",
+      "Dom Pedro I",
+      "Duque de Caxias",
+      "Zumbi dos Palmares"
+    ],
+    "resposta": "Tiradentes"
+  },
+  {
+    "pergunta": "Qual é a organela responsável pela respiração celular?",
+    "opcoes": [
+      "Núcleo",
+      "Mitocôndria",
+      "Cloroplasto",
+      "Ribossomo"
+    ],
+    "resposta": "Mitocôndria"
+  },
+  {
+    "pergunta": "Qual equação representa a Lei de Ohm?",
+    "opcoes": [
+      "V = I/R",
+      "V = R*I",
+      "P = V*I",
+      "E = m*c²"
+    ],
+    "resposta": "V = R*I"
+  },
+  {
+    "pergunta": "Qual poeta escreveu 'Os Lusíadas'?",
+    "opcoes": [
+      "Fernando Pessoa",
+      "Luís de Camões",
+      "Castro Alves",
+      "Carlos Drummond de Andrade"
+    ],
+    "resposta": "Luís de Camões"
+  },
+  {
+    "pergunta": "Qual país foi colonizado por portugueses e espanhóis simultaneamente?",
+    "opcoes": [
+      "Brasil",
+      "Uruguai",
+      "Paraguai",
+      "Colômbia"
+    ],
+    "resposta": "Uruguai"
+  },
+  {
+    "pergunta": "Qual é a derivada de ln(x)?",
+    "opcoes": [
+      "1/x",
+      "e^x",
+      "x",
+      "ln(x)"
+    ],
+    "resposta": "1/x"
+  },
+  {
+    "pergunta": "Qual tratado pôs fim à Primeira Guerra Mundial?",
+    "opcoes": [
+      "Tratado de Versalhes",
+      "Tratado de Tordesilhas",
+      "Pacto de Varsóvia",
+      "Acordo de Bretton Woods"
+    ],
+    "resposta": "Tratado de Versalhes"
+  }
+]

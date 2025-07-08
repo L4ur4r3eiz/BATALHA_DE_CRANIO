@@ -1,34 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
-
-Future<GerenciadorQuiz> carregarPerguntas() async {
-  final String response = await rootBundle.loadString('assets/perguntas.json');
-  final List<dynamic> data = await json.decode(response);
-  return GerenciadorQuiz.fromJson(data);
-}
-
+import 'pergunta_loader.dart';
+import 'main.dart';
 
 class TelaPergunta extends StatefulWidget {
   @override
-  _TelaPerguntaState createState() => _TelaPerguntaState();
+  State<TelaPergunta> createState() => _TelaPerguntaState();
 }
 
 class _TelaPerguntaState extends State<TelaPergunta> {
+  List<Pergunta> perguntas = [];
+  int perguntaAtual = 0;
+  int pontuacao = 0;
+  bool carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    carregar();
+  }
+
+  void carregar() async {
+    perguntas = await carregarPerguntas();
+    perguntas.shuffle();
+    setState(() {
+      carregando = false;
+    });
+  }
+
+  void responder(String respostaSelecionada) {
+    if (respostaSelecionada == perguntas[perguntaAtual].resposta) {
+      setState(() {
+        pontuacao++;
+      });
+    }
+
+    if (perguntaAtual + 1 < perguntas.length) {
+      setState(() {
+        perguntaAtual++;
+      });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              Resultado(pontuacao: pontuacao, total: perguntas.length),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (carregando) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final pergunta = perguntas[perguntaAtual];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Pergunta ${perguntaAtual + 1}"),
+        backgroundColor: const Color.fromARGB(255, 243, 152, 33),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('images/deserto.jpg'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("💀 Pontos: ", style: TextStyle(fontSize: 16)),
+                        Text(
+                          "$pontuacao",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  pergunta.pergunta,
+                  style: TextStyle(fontSize: 22, color: Colors.white),
+                ),
+                SizedBox(height: 30),
+                ...pergunta.opcoes.map(
+                  (opcao) => Resposta(
+                    texto: opcao,
+                    aoResponder: () => responder(opcao),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Resposta extends StatelessWidget {
+  final String texto;
+  final VoidCallback aoResponder;
+
+  const Resposta({required this.texto, required this.aoResponder});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: 10),
+      child: ElevatedButton(
+        onPressed: aoResponder,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 243, 152, 33),
+          padding: EdgeInsets.all(16),
+        ),
+        child: Text(texto),
+      ),
+    );
+  }
+}
+
+class Resultado extends StatelessWidget {
+  final int pontuacao;
+  final int total;
+
+  const Resultado({required this.pontuacao, required this.total});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("Resultado"),
         backgroundColor: const Color.fromARGB(255, 243, 152, 33),
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: const Color.fromARGB(255, 250, 117, 8),
-          ),
-          onPressed: () => Navigator.pop(context),
-          // Volta pra tela anterior
-        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -37,117 +165,51 @@ class _TelaPerguntaState extends State<TelaPergunta> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.all(20),
+        child: Center(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "A senha numérica do cofre eletrônico de Beto é composta por 5 algarismos distintos. Beto esqueceu sua senha, porém se lembra de que os 3 primeiros algarismos são ímpares e os dois últimos são pares. Nessas condições, o número máximo de tentativas de que Beto precisa para acessar seu cofre é igual",
-                style: TextStyle(fontSize: 30, color: Colors.white),
+                "Você acertou $pontuacao de $total perguntas!",
+                style: TextStyle(fontSize: 24),
+                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 30),
-              
-              Resposta(texto: "100."),
-              SizedBox(height: 15),
-              Resposta(texto: "1 200.", correta: true),
-              SizedBox(height: 15),
-              Resposta(texto: "640."),
-              SizedBox(height: 15),
-              Resposta(texto: "1 000."),
-              SizedBox(height: 15),
-              Resposta(texto: "480"),
-  
-              
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TelaInicial()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 243, 152, 33),
+                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 10),
+                  minimumSize: Size(200, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 10,
+                ),
+                child: Text(
+                  "RECOMEÇAR",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    shadows: [
+                      Shadow(
+                        color: Color.fromARGB(255, 240, 117, 17),
+                        offset: Offset(2, 2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class Resposta extends StatelessWidget {
-  final String texto;
-  final bool correta;
-
-  const Resposta({required this.texto, this.correta = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(bottom: 10),
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 10),
-                  minimumSize: Size(200, 60),
-          backgroundColor: correta
-              ? const Color.fromARGB(255, 243, 152, 33)
-              : const Color.fromARGB(255, 243, 152, 33),
-        ),
-        child: Text(texto),
-      ),
-    );
-  }
-}
-
-class PerguntaQuiz {
-  final String pergunta;
-  final List<String> opcoes;
-  final String resposta;
-
-  PerguntaQuiz({
-    required this.pergunta,
-    required this.opcoes,
-    required this.resposta,
-  });
-
-  factory PerguntaQuiz.fromJson(Map<String, dynamic> json) {
-    return PerguntaQuiz(
-      pergunta: json['pergunta'],
-      opcoes: List<String>.from(json['opcoes']),
-      resposta: json['resposta'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'pergunta': pergunta,
-      'opcoes': opcoes,
-      'resposta': resposta,
-    };
-  }
-
-  bool respostaEstaCorreta(String respostaUsuario) {
-    return respostaUsuario == resposta;
-  }
-
-  List<String> opcoesEmbaralhadas() {
-    final listaEmbaralhada = List<String>.from(opcoes);
-    listaEmbaralhada.shuffle();
-    return listaEmbaralhada;
-  }
-}
-
-class GerenciadorQuiz {
-  final List<PerguntaQuiz> perguntas;
-
-  GerenciadorQuiz({required this.perguntas});
-
-  factory GerenciadorQuiz.fromJson(List<dynamic> jsonList) {
-    return GerenciadorQuiz(
-      perguntas: jsonList.map((json) => PerguntaQuiz.fromJson(json)).toList(),
-    );
-  }
-
-  int get totalPerguntas => perguntas.length;
-
-  PerguntaQuiz getPergunta(int index) {
-    return perguntas[index];
-  }
-
-  void embaralharPerguntas() {
-    perguntas.shuffle();
   }
 }
