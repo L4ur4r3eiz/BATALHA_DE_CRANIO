@@ -8,7 +8,9 @@ class MeuApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: TelaInicial());
+    return MaterialApp(debugShowCheckedModeBanner: false,
+    title: 'Batalha de Cranios',
+     home: TelaInicial());
   }
 }
 
