@@ -1,5 +1,7 @@
+import 'package:batalha_de_cranios/data/http/http_usuario.dart';
+import 'package:batalha_de_cranios/stores/Pergunta_store.dart';
 import 'package:flutter/material.dart';
-import 'pergunta_loader.dart';
+import 'package:batalha_de_cranios/pergunta_loader.dart';
 import 'main.dart';
 
 class TelaPergunta extends StatefulWidget {
@@ -13,10 +15,15 @@ class _TelaPerguntaState extends State<TelaPergunta> {
   int pontuacao = 0;
   bool carregando = true;
 
+  final PerguntaStore store = PerguntaStore(
+    repository: PerguntaRepository(client: HttpUsuario()),
+  );
+
   @override
   void initState() {
     super.initState();
     carregar();
+    store.getPerguntas();
   }
 
   void carregar() async {
@@ -62,7 +69,8 @@ class _TelaPerguntaState extends State<TelaPergunta> {
         title: Text("Pergunta ${perguntaAtual + 1}"),
         backgroundColor: const Color.fromARGB(255, 243, 152, 33),
       ),
-      body: Stack(
+      body: 
+       Stack(
         children: [
           Container(
             decoration: BoxDecoration(
